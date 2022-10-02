@@ -1,7 +1,5 @@
-module Main where
-
-import Options.Applicative
 import Data.Semigroup ((<>))
+import Options.Applicative
 import Scanner
 
 -- The CLI data type accepts the filename (target that will be compiled)
@@ -14,28 +12,26 @@ import Scanner
 -- 	interp:: CompilerCli -> IO() {let s = getSource}
 --
 --
-newtype CompilerCli = CompilerCli
-  {
-  target :: String
-  }
+newtype CompilerCli =
+  CompilerCli
+    { target :: String
+    }
 
 cli :: Parser CompilerCli
-cli = CompilerCli
-  <$> strOption
-    (long "target"
-    <> short 't'
-    <> metavar "TARGET"
-    <> help "Target to compile")
+cli =
+  CompilerCli <$>
+  strOption
+    (long "target" <> short 't' <> metavar "TARGET" <> help "Target to compile")
 
-runCli :: CompilerCli -> IO ()
+runCli :: CompilerCli -> IO [[Maybe (EurekaValue, Input)]]
 runCli (CompilerCli t) = getSource t
 
-main :: IO ()
+main :: IO [[Maybe (EurekaValue, Input)]]
 main = runCli =<< execParser opts
   where
-    opts = 
-      info (cli <**> helper)
-      (fullDesc
-      <> progDesc "Compiles a target to x86_64"
-      <> header "t a test for a compuiler for Eureka lang"
-      )     
+    opts =
+      info
+        (cli <**> helper)
+        (fullDesc <>
+         progDesc "Compiles a target to x86_64" <>
+         header "t a test for a compuiler for Eureka lang")
